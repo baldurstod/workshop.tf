@@ -48,7 +48,7 @@ func initEngine(config Config) *gin.Engine {
 
 	r.Use(cors.New(cors.Config{
 		AllowMethods:    []string{"POST", "OPTIONS"},
-		AllowHeaders:    []string{"Origin", "Content-Length", "Content-Type", "Request-Id"},
+		AllowHeaders:    []string{"Origin", "Content-Length", "Content-Type", "X-Request-Id"},
 		AllowAllOrigins: true,
 		MaxAge:          12 * time.Hour,
 	}))
@@ -73,15 +73,19 @@ func initEngine(config Config) *gin.Engine {
 	r.Use(rewriteURL(r))
 	//r.Use(setHeaders())
 	r.StaticFS("/static", http.FS(useFS))
+	r.POST("/api", apiHandler)
 
 	return r
 }
 
 func rewriteURL(r *gin.Engine) gin.HandlerFunc {
 	return func(c *gin.Context) {
+		if c.Request.URL.Path == "/api" {
+			c.Next()
+			return
+		}
 		if strings.HasPrefix(c.Request.URL.Path, "/@") {
 			c.Request.URL.Path = "/"
-			c.Request.URL.RawPath = "/"
 			c.Abort()
 			r.HandleContext(c)
 			c.Next()
@@ -89,7 +93,6 @@ func rewriteURL(r *gin.Engine) gin.HandlerFunc {
 		}
 		if !strings.HasPrefix(c.Request.URL.Path, "/static") {
 			c.Request.URL.Path = "/static" + c.Request.URL.Path
-			c.Request.URL.RawPath = "/static" + c.Request.URL.Path
 			c.Abort()
 			r.HandleContext(c)
 			c.Next()

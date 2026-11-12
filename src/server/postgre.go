@@ -29,7 +29,7 @@ func openPostgre(dataSourceName string) *sql.DB {
 	return db
 }
 
-func ClosePostgre() {
+func closePostgre() {
 	for _, db := range dbs {
 		if db != nil {
 			db.Close()

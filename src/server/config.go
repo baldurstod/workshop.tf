@@ -23,5 +23,6 @@ type Sessions struct {
 }
 
 type Steam struct {
-	ApiKey string `json:"api_key"`
+	ApiKey string   `json:"api_key"`
+	DB     Database `json:"db"`
 }

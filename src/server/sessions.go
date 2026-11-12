@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"net/http"
 
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
@@ -9,7 +10,7 @@ import (
 
 func getSession(c *gin.Context) sessions.Session {
 	session := sessions.Default(c)
-	session.Options(sessions.Options{MaxAge: 86400 * 30, Path: "/"})
+	session.Options(sessions.Options{MaxAge: 86400 * 30, Path: "/", Secure: true, HttpOnly: true, SameSite: http.SameSiteStrictMode})
 	return session
 }
 
