@@ -1,2 +1,39 @@
 :host {
+	display: flex;
+	--item-size: 15rem;
+}
+
+.items {
+	max-width: 50rem;
+	flex: 1 1 0%;
+	display: flex;
+	flex-wrap: wrap;
+	place-content: baseline center;
+	position: relative;
+	height: 100%;
+	box-sizing: border-box;
+	overflow: hidden auto;
+	padding-bottom: 20rem;
+	background-color: blueviolet;
+	--r: var(--rows, 1);
+}
+
+.spacer {
+	width: 10000rem;
+	height: calc(var(--item-size) * var(--r));
+	background-color: aquamarine;
+}
+
+.item {
+	top: calc(var(--item-size) * var(--row));
+	left: calc(var(--item-size) * var(--column) + var(--offset));
+	width: var(--item-size);
+	height: var(--item-size);
+	overflow: hidden;
+	cursor: pointer;
+}
+
+.item>img {
+	width: 100%;
+	height: 100%;
 }

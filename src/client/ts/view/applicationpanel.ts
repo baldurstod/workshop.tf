@@ -2,14 +2,12 @@ import { I18n, createShadowRoot, defineHarmonyRadio, defineHarmonySwitch, define
 import applicationCSS from '../../css/application.css';
 import htmlCSS from '../../css/html.css';
 import varsCSS from '../../css/vars.css';
-import { MainPanel } from './mainpanel';
 
 documentStyle(htmlCSS);
 documentStyle(varsCSS);
 
 export class ApplicationPanel {
 	#shadowRoot!: ShadowRoot;
-	#mainContent = new MainPanel();
 
 	static {
 		defineHarmonySwitch();
@@ -22,14 +20,27 @@ export class ApplicationPanel {
 		this.#initHTML();
 	}
 
-	#initHTML(): void {
+	#initHTML(): HTMLElement {
 		this.#shadowRoot = createShadowRoot('div', {
 			parent: document.body,
+			class: 'ApplicationPanel',
 			adoptStyle: applicationCSS,
 			childs: [
-				this.#mainContent.getHTMLElement(),
+				//this.#mainContent.getHTMLElement(),
 			],
 		});
 		I18n.observeElement(this.#shadowRoot);
+		return this.#shadowRoot?.host as HTMLElement;
+	}
+
+	get htmlElement(): HTMLElement {
+		return this.#shadowRoot?.host as (HTMLElement | undefined) ?? this.#initHTML();
+	}
+
+	get shadowRoot(): ShadowRoot {
+		if (!this.#shadowRoot) {
+			this.#initHTML();
+		}
+		return this.#shadowRoot;
 	}
 }

@@ -1,0 +1,19 @@
+{
+	"https": {
+		"port": 0,
+		"https_key_file": "./var/key.pem",
+		"https_cert_file": "./var/cert.pem"
+	},
+	"sessions": {
+		"db": {
+			"datasource": "postgres://user:pass@localhost/db_name"
+		},
+		"secret": "=",
+		"session_name": "session"
+	},
+	"steam": {
+		"db": {
+			"datasource": "postgres://user:pass@localhost/db_name"
+		}
+	}
+}

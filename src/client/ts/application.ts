@@ -1,15 +1,18 @@
 import { ContextType, Graphics, GraphicsEvents, GraphicTickEvent, MergeRepository, Repositories, ShaderPrecision, Source1MaterialManager, Source1ModelManager, Source1ParticleControler, WebGLStats, WebRepository } from 'harmony-3d';
-import { addNotification, NotificationsPlacement, NotificationType, OptionsManager, setNotificationsPlacement } from 'harmony-browser-utils';
+import { NotificationsPlacement, OptionsManager, setNotificationsPlacement, SinglePageApplication } from 'harmony-browser-utils';
 import { JSONObject } from 'harmony-types';
-import { createElement, documentStyle, enableHelp, I18n, I18nTranslation } from 'harmony-ui';
+import { documentStyle, enableHelp, I18n, I18nTranslation } from 'harmony-ui';
 import { BugReport, BugReporter } from 'harmony-utils';
 import { Tf2CharacterManager, Tf2Team } from 'loadout';
 import htmlCSS from '../css/html.css';
 import varsCSS from '../css/vars.css';
 import english from '../json/i18n/english.json';
-import { TF2_GROUP_URL, TF2_REPOSITORY } from './constants';
+import { TF2_REPOSITORY } from './constants';
 import { activeCameraControl, loadoutScene, orbitCamera } from './loadout/scene';
+import { MainPage } from './pages/mainpage';
+import { UploadPage } from './pages/uploadpage';
 import { ApplicationPanel } from './view/applicationpanel';
+//import { ApplicationPanel } from './view/applicationpanel';
 
 documentStyle(htmlCSS);
 documentStyle(varsCSS);
@@ -18,7 +21,7 @@ BugReporter.addEventListener('report', (event: Event) => {
 	console.info('bug report', (event as CustomEvent<BugReport>).detail);
 })
 
-class Application {
+class Application extends SinglePageApplication {
 	#appView = new ApplicationPanel();
 	#translations = new Map<string, I18nTranslation>();
 	#documentStyleSheet = new CSSStyleSheet();
@@ -33,7 +36,11 @@ class Application {
 	}
 
 	constructor() {
-		this.#init();
+		super();
+		this.init([
+			new MainPage(),
+			new UploadPage(),
+		]);
 	}
 
 	async #init(): Promise<void> {
@@ -47,10 +54,6 @@ class Application {
 
 	async #initGraphics(): Promise<void> {
 		let contextType: ContextType = 'webgl';
-
-		if (OptionsManager.getItem('engine.renderer.experimentalwebgpu')) {
-			contextType = 'webgpu';
-		}
 
 		await Graphics.initCanvas({
 			useOffscreenCanvas: true,
@@ -182,33 +185,22 @@ class Application {
 		return p;
 	}
 
-	#showAboutLayer(): void {
-		const html = `${I18n.getString('#loadout_tf_service_provided')}<a href="http://steamcommunity.com/id/baldurstod/" target="_blank">Baldurs Tod</a><br>
-		<a href="https://www.redbubble.com/people/Loadout/shop?asc=u" target="_blank">${I18n.getString('#redbubble_shop')}</a><br>
-		${I18n.getString('#model_texture_files_property')}<a href="http://www.valvesoftware.com/" target="_blank">Valve Corporation</a><br>
-		${I18n.getString('#valve_tf_trademarks')}`;
+	async initApplication(): Promise<void> {
+		/*
+		createElement('div', {
+			parent: window.document.body,
+			child: this.htmlElement,
+		});
+		*/
 
-		addNotification(html, NotificationType.Info, 15);
 	}
 
-	#showBugNotification(): void {
-		const html = createElement('div', {
-			childs: [
-				createElement('a', {
-					style: 'color:white;display:block;',
-					href: TF2_GROUP_URL,
-					target: '_blank',
-					i18n: '#get_assistance_on_steam',
-				}),
-				createElement('a', {
-					style: 'color:white;display:block;',
-					href: 'https://discord.gg/7EhW2WCWyQ',//TODO: const
-					target: '_blank',
-					i18n: '#get_assistance_on_discord',
-				}),
-			]
-		});
-		addNotification(html, NotificationType.Info, 15);
+	pageActivated(): void {
+
+	}
+
+	get htmlElement(): ShadowRoot {
+		return this.#appView.shadowRoot;
 	}
 }
 new Application();

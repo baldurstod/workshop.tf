@@ -78,19 +78,33 @@ func initEngine(config Config) *gin.Engine {
 	return r
 }
 
+var singlePagePaths = getSinglePagePaths()
+
+func getSinglePagePaths() []string {
+	return []string{"/upload"}
+}
+
+//
+
+//{"Origin", "Content-Length", "Content-Type", "X-Request-Id"},
+
 func rewriteURL(r *gin.Engine) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		if c.Request.URL.Path == "/api" {
 			c.Next()
 			return
 		}
-		if strings.HasPrefix(c.Request.URL.Path, "/@") {
-			c.Request.URL.Path = "/"
-			c.Abort()
-			r.HandleContext(c)
-			c.Next()
-			return
+
+		for _, path := range singlePagePaths {
+			if strings.HasPrefix(c.Request.URL.Path, path) {
+				c.Request.URL.Path = "/"
+				c.Abort()
+				r.HandleContext(c)
+				c.Next()
+				return
+			}
 		}
+
 		if !strings.HasPrefix(c.Request.URL.Path, "/static") {
 			c.Request.URL.Path = "/static" + c.Request.URL.Path
 			c.Abort()
