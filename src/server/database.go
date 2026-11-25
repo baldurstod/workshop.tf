@@ -145,7 +145,7 @@ func getItems(params itemParams) ([]WorkshopItemSummary, error) {
 		sortDirection = "asc"
 	}
 
-	query := `SELECT published_files.publishedfileid, creator, title, preview_url, time_created, published_files.time_updated, subscriptions, array_to_json(tags)
+	query := `SELECT published_files.publishedfileid, creator, style, title, preview_url, time_created, published_files.time_updated, subscriptions, array_to_json(tags)
 	FROM published_files INNER JOIN uploaded_files ON published_files.publishedfileid = uploaded_files.publishedfileid
 	WHERE disabled = false ORDER BY ` + sortField + ` ` + sortDirection + ` LIMIT(50000);`
 	res, err := db.Query(query, values...)
@@ -159,6 +159,7 @@ func getItems(params itemParams) ([]WorkshopItemSummary, error) {
 	for res.Next() {
 		var publishedfileid string
 		var creator string
+		var style uint
 		var title string
 		var fileUrl string
 		var timeCreated uint64
@@ -166,7 +167,7 @@ func getItems(params itemParams) ([]WorkshopItemSummary, error) {
 		var subscriptions uint64
 		var tags string
 
-		err = res.Scan(&publishedfileid, &creator, &title, &fileUrl, &timeCreated, &timeUpdated, &subscriptions, &tags)
+		err = res.Scan(&publishedfileid, &creator, &style, &title, &fileUrl, &timeCreated, &timeUpdated, &subscriptions, &tags)
 		if err != nil {
 			return nil, fmt.Errorf("failed to scan row in getItems: <%w>", err)
 		}
@@ -176,7 +177,7 @@ func getItems(params itemParams) ([]WorkshopItemSummary, error) {
 			return nil, fmt.Errorf("failed to unmarshal tags: <%w>", err)
 		}
 
-		result = append(result, WorkshopItemSummary{publishedfileid, creator, title, fileUrl, timeCreated, timeUpdated, subscriptions, arr})
+		result = append(result, WorkshopItemSummary{publishedfileid, creator, style, title, fileUrl, timeCreated, timeUpdated, subscriptions, arr})
 	}
 
 	// Check if we have an error

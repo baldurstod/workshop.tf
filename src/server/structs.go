@@ -3,6 +3,7 @@ package main
 type WorkshopItem struct {
 	Publishedfileid            string        `json:"publishedfileid" mapstructure:"publishedfileid"`
 	Creator                    string        `json:"creator" mapstructure:"creator"`
+	Style                      uint          `json:"style" mapstructure:"style"`
 	Title                      string        `json:"title" mapstructure:"title"`
 	TimeCreated                uint64        `json:"time_created" mapstructure:"time_created"`
 	TimeUpdated                uint64        `json:"time_updated" mapstructure:"time_updated"`
@@ -24,6 +25,7 @@ type WorkshopTag struct {
 type WorkshopItemSummary struct {
 	Publishedfileid string   `json:"publishedfileid"`
 	Creator         string   `json:"creator"`
+	Style           uint     `json:"style"`
 	Title           string   `json:"title"`
 	PreviewUrl      string   `json:"preview_url"`
 	TimeCreated     uint64   `json:"time_created"`
