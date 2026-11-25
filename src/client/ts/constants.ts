@@ -42,7 +42,6 @@ export const SHARE_LOADOUT_URL = 'https://share.loadout.tf/';
 export const WORKSHOP_UGC_URL = 'https://ugc.workshop.tf/';
 export const WORKSHOP_UGC_IMG_PREFIX = 'https://images.steamusercontent.com/ugc/';
 export const WORKSHOP_URL = 'https://workshop.tf/php/workshop/getAllItems.php';
-export const STEAM_WORKSHOP_URL = 'http://steamcommunity.com/sharedfiles/filedetails/?id=';
 export const WORKSHOP_REPO = 'workshop_';
 
 export const ACE_EDITOR_URI = 'https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/ace.js';

@@ -1,7 +1,7 @@
 import { CanvasAttributes, CanvasLayout, CanvasView, Graphics } from 'harmony-3d';
 import { Page, ShortcutHandler } from 'harmony-browser-utils';
 import { createElement, createShadowRoot, hide, I18n, show } from 'harmony-ui';
-import { ItemFilterAttribute, Tf2ItemManager, Tf2LoadoutController } from 'loadout';
+import { ItemFilterAttribute, STEAM_WORKSHOP_URL, Tf2CharacterManager, Tf2CharacterToClass, Tf2ItemManager, Tf2ItemTemplate, Tf2LoadoutController } from 'loadout';
 import mainCSS from '../../css/main.css';
 import { LOADOUT_LAYOUT, MAIN_CANVAS } from '../constants';
 import { loadoutScene } from '../loadout/scene';
@@ -57,13 +57,12 @@ export class MainPage extends Page {
 					],
 				),
 			],
+			autoResize: true,
 			useLayout: LOADOUT_LAYOUT,
 		});
 
 		if (this.#mainCanvas) {
 			this.#htmlCanvas = this.#mainCanvas.canvas;
-			this.#htmlCanvas.width = 400;
-			this.#htmlCanvas.height = 665;
 			ShortcutHandler.addContext('3dview', this.#htmlCanvas);
 		} else {
 			// TODO: display error
@@ -77,7 +76,10 @@ export class MainPage extends Page {
 					class: 'items',
 					child: createElement('div', { class: 'spacer' }),
 				}),
-				this.#htmlCanvas,
+				createElement('div', {
+					class: 'viewer',
+					child: this.#htmlCanvas,
+				}),
 			],
 		});
 		I18n.observeElement(this.#shadowRoot);
@@ -129,9 +131,22 @@ export class MainPage extends Page {
 				let img: HTMLImageElement;
 				htmlItem = createElement('div', {
 					class: 'item',
-					child: img = createElement('img', {
-						//src: item.imageInventory,
-					}),
+					childs: [
+						img = createElement('img', {
+							$click: () => this.#itemClicked(item),
+						}),
+						createElement('div', {
+							class: 'links',
+							childs: [
+								createElement('a', {
+									href: `${STEAM_WORKSHOP_URL}${item.id.substring(1)}`,
+									target: '_blank',
+									innerText: item.name,
+									title: item.name,
+								}),
+							],
+						}),
+					],
 				});
 
 				this.#imgIntersectionObserver.observe(img);
@@ -182,5 +197,26 @@ export class MainPage extends Page {
 				item.remove();
 			}
 		}
+	}
+
+	async #itemClicked(item: Tf2ItemTemplate): Promise<void> {
+		console.info(`Clicked: ${item.id}`, item);
+
+		// Pick the first class
+		const usedBy = item.getUsedByClasses().entries().next().value;
+		if (!usedBy) {
+			console.warn('can\'t find used by', item);
+			return;
+		}
+
+		const tf2Class = Tf2CharacterToClass[usedBy[0]];
+		if (tf2Class === undefined) {
+			console.warn('can\'t find class', item);
+			return;
+		}
+
+		const character = await Tf2CharacterManager.selectCharacter(tf2Class, loadoutScene, 0);
+
+		await character.toggleItem(item);
 	}
 }

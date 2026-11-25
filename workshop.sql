@@ -19,6 +19,7 @@ CREATE TABLE published_files (
 CREATE TABLE uploaded_files (
 	id SERIAL,
 	publishedfileid TEXT PRIMARY KEY,
+	style INTEGER NOT NULL,
 	time_uploaded TIMESTAMPTZ NOT NULL,
 	time_updated TIMESTAMPTZ NOT NULL
 );

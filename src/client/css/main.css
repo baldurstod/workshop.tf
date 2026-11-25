@@ -1,6 +1,8 @@
 :host {
 	display: flex;
 	--item-size: 15rem;
+	width: 100%;
+	height: 100%;
 }
 
 .items {
@@ -36,4 +38,26 @@
 .item>img {
 	width: 100%;
 	height: 100%;
+}
+
+.links {
+	position: absolute;
+	bottom: 0;
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+	background-color: rgba(27, 40, 56, 0.5);
+}
+
+.links a {
+	text-decoration: none;
+	color: white;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	overflow: hidden;
+	font-size: 20px;
+}
+
+.viewer {
+	flex: 1;
 }

@@ -41,6 +41,7 @@ class Application extends SinglePageApplication {
 			new MainPage(),
 			new UploadPage(),
 		]);
+		this.#init();
 	}
 
 	async #init(): Promise<void> {
@@ -204,3 +205,24 @@ class Application extends SinglePageApplication {
 	}
 }
 new Application();
+
+
+const originalFetch = window.fetch;
+
+window.fetch = function (input: RequestInfo | URL, init?: RequestInit): Promise<Response> {
+	let url: URL;
+	if (input instanceof Request) {
+		url = new URL(input.url);
+	} else {
+		url = new URL(input);
+	}
+
+	if (url.host === 'ugc.workshop.tf') {
+		const result = /^\/(\d*)\/(\d*)\/(\d*)\/(.*)/.exec(url.pathname);
+		if (result?.length === 5) {
+			url.pathname = `/${result[1]}/${result[2]}/${result[4]}`;
+		}
+	}
+
+	return originalFetch(url, init);
+}

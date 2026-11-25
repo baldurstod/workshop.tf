@@ -1,8 +1,8 @@
-import { Camera, CameraControl, ColorBackground, Entity, FirstPersonControl, Group, HALF_PI, OrbitControl, PointLight, Scene, SceneExplorer, Source1ModelInstance, Source1ModelManager } from 'harmony-3d';
+import { AmbientLight, Camera, CameraControl, ColorBackground, Entity, Grid, Group, HALF_PI, OrbitControl, PointLight, Scene, SceneExplorer, Source1ModelInstance, Source1ModelManager } from 'harmony-3d';
 
 export const loadoutScene = new Scene();
 export const loadoutColorBackground = new ColorBackground();
-export const orbitCamera = new Camera({ name: 'Orbit camera', nearPlane: 10, farPlane: 5000, autoResize: true });
+export const orbitCamera = new Camera({ name: 'Orbit camera', nearPlane: 10, farPlane: 5000, autoResize: true, position: [100, 0, 0] });
 export const firstPersonCamera = new Camera({
 	nearPlane: 5,
 	farPlane: 1000,
@@ -16,6 +16,8 @@ export const orbitCameraControl = new OrbitControl(orbitCamera);
 export let activeCameraControl: CameraControl = orbitCameraControl;
 
 loadoutScene.addChild(orbitCameraControl.target);
+loadoutScene.addChild(new AmbientLight());
+loadoutScene.addChild(new Grid());
 
 export let customLightsContainer: Entity | undefined;
 export const lightsContainer = new Group({ name: 'Lights' });
@@ -25,8 +27,8 @@ export function setCustomLightsContainer(container: Entity): void {
 }
 
 export let activeCamera = orbitCamera;
-			//camera = orbitCamera;
-			//setActiveCameraControl(orbitCameraControl);
+//camera = orbitCamera;
+//setActiveCameraControl(orbitCameraControl);
 new SceneExplorer().setScene(loadoutScene);
 loadoutScene.activeCamera = orbitCamera;
 loadoutScene.addChild(orbitCamera);
