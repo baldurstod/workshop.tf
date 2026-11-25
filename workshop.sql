@@ -1,10 +1,10 @@
 CREATE TABLE published_files (
 	id SERIAL,
-	publishedfileid BIGINT PRIMARY KEY,
+	publishedfileid TEXT PRIMARY KEY,
+	creator TEXT NOT NULL,
 	title TEXT NOT NULL,
 	time_created BIGINT NOT NULL,
 	time_updated BIGINT NOT NULL,
-	creator BIGINT NOT NULL,
 	tags text[] NOT NULL,
 	file_size BIGINT NOT NULL,
 	file_url TEXT NOT NULL,
@@ -18,7 +18,7 @@ CREATE TABLE published_files (
 
 CREATE TABLE uploaded_files (
 	id SERIAL,
-	publishedfileid BIGINT PRIMARY KEY,
+	publishedfileid TEXT PRIMARY KEY,
 	time_uploaded TIMESTAMPTZ NOT NULL,
 	time_updated TIMESTAMPTZ NOT NULL
 );
