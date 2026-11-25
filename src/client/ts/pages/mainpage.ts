@@ -85,6 +85,9 @@ export class MainPage extends Page {
 		I18n.observeElement(this.#shadowRoot);
 
 		this.#htmlItemList.addEventListener('scroll', () => this.#handleItemsScroll(), { passive: true });
+		// Refresh item in case the window is resized
+		new ResizeObserver(() => this.#refreshItems()).observe(this.#htmlItemList);
+
 		return this.#shadowRoot?.host as HTMLElement;
 	}
 
@@ -103,7 +106,6 @@ export class MainPage extends Page {
 	}
 
 	#refreshItems(): void {
-		console.info('refreshItems');
 		for (const [, htmlItem] of this.#htmlItems) {
 			hide(htmlItem);
 		}
@@ -121,7 +123,6 @@ export class MainPage extends Page {
 
 		let row = 0;
 		let column = 0;
-		console.info(items);
 		for (const [id, item] of items) {
 			let htmlItem = this.#htmlItems.get(id);
 			if (htmlItem) {

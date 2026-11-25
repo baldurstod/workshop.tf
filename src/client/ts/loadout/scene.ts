@@ -1,4 +1,4 @@
-import { AmbientLight, Camera, CameraControl, ColorBackground, Entity, Grid, Group, HALF_PI, OrbitControl, PointLight, Scene, SceneExplorer, Source1ModelInstance, Source1ModelManager } from 'harmony-3d';
+import { AmbientLight, Camera, CameraControl, ColorBackground, Entity, Group, HALF_PI, OrbitControl, PointLight, Scene, SceneExplorer, Source1ModelInstance, Source1ModelManager } from 'harmony-3d';
 
 export const loadoutScene = new Scene();
 export const loadoutColorBackground = new ColorBackground();
@@ -16,8 +16,6 @@ export const orbitCameraControl = new OrbitControl(orbitCamera);
 export let activeCameraControl: CameraControl = orbitCameraControl;
 
 loadoutScene.addChild(orbitCameraControl.target);
-loadoutScene.addChild(new AmbientLight());
-loadoutScene.addChild(new Grid());
 
 export let customLightsContainer: Entity | undefined;
 export const lightsContainer = new Group({ name: 'Lights' });

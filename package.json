@@ -28,6 +28,7 @@
     "typescript-eslint": "^8.72.0"
   },
   "dependencies": {
+    "gl-matrix": "^3.4.4",
     "harmony-3d": "github:baldurstod/harmony-3d",
     "harmony-browser-utils": "github:baldurstod/harmony-browser-utils",
     "harmony-ui": "github:baldurstod/harmony-ui",

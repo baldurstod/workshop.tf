@@ -1,5 +1,6 @@
-import { ContextType, Graphics, GraphicsEvents, GraphicTickEvent, MergeRepository, Repositories, ShaderPrecision, Source1MaterialManager, Source1ModelManager, Source1ParticleControler, WebGLStats, WebRepository } from 'harmony-3d';
-import { NotificationsPlacement, OptionsManager, setNotificationsPlacement, SinglePageApplication } from 'harmony-browser-utils';
+import { vec4 } from 'gl-matrix';
+import { ContextType, Entity, Graphics, GraphicsEvents, GraphicTickEvent, JSONLoader, MergeRepository, Repositories, ShaderPrecision, Source1MaterialManager, Source1ModelManager, Source1ParticleControler, stringToQuat, stringToVec3, WebGLStats, WebRepository } from 'harmony-3d';
+import { NotificationsPlacement, OptionsManager, OptionsManagerEvent, OptionsManagerEvents, setNotificationsPlacement, SinglePageApplication } from 'harmony-browser-utils';
 import { JSONObject } from 'harmony-types';
 import { documentStyle, enableHelp, I18n, I18nTranslation } from 'harmony-ui';
 import { BugReport, BugReporter } from 'harmony-utils';
@@ -7,8 +8,9 @@ import { Tf2CharacterManager, Tf2Team } from 'loadout';
 import htmlCSS from '../css/html.css';
 import varsCSS from '../css/vars.css';
 import english from '../json/i18n/english.json';
+import optionsmanager from '../json/optionsmanager.json';
 import { TF2_REPOSITORY } from './constants';
-import { activeCameraControl, loadoutScene, orbitCamera } from './loadout/scene';
+import { activeCameraControl, customLightsContainer, loadoutScene, orbitCamera, orbitCameraControl, setCustomLightsContainer } from './loadout/scene';
 import { MainPage } from './pages/mainpage';
 import { UploadPage } from './pages/uploadpage';
 import { ApplicationPanel } from './view/applicationpanel';
@@ -49,6 +51,8 @@ class Application extends SinglePageApplication {
 		document.adoptedStyleSheets.push(this.#documentStyleSheet);
 		await this.#initGraphics();
 		//this.#initHTML();
+
+		this.#initOptions();
 		this.#iniRepositories();
 		this.#start();
 	}
@@ -196,13 +200,62 @@ class Application extends SinglePageApplication {
 
 	}
 
-	pageActivated(): void {
-
-	}
+	override pageActivated(): void { }
 
 	get htmlElement(): ShadowRoot {
 		return this.#appView.shadowRoot;
 	}
+
+	async #initOptions(): Promise<void> {
+		OptionsManagerEvents.addEventListener('app.camera.position', (event: Event) => this.#setPerspectiveCameraPosition((event as CustomEvent<OptionsManagerEvent<string>>).detail.value));
+		OptionsManagerEvents.addEventListener('app.camera.orientation', (event: Event) => this.#setPerspectiveCameraOrientation((event as CustomEvent<OptionsManagerEvent<string>>).detail.value));
+		OptionsManagerEvents.addEventListener('app.camera.target', (event: Event) => this.#setPerspectiveCameraTarget((event as CustomEvent<OptionsManagerEvent<string>>).detail.value));
+		OptionsManagerEvents.addEventListener('app.camera.verticalfov', (event: Event) => this.#setVerticalFov((event as CustomEvent<OptionsManagerEvent<number>>).detail.value));
+
+		OptionsManagerEvents.addEventListener('app.lights', (event: Event) => {
+			void (async (): Promise<void> => {
+				loadoutScene.removeChild(customLightsContainer);
+				setCustomLightsContainer(await JSONLoader.fromJSON(JSON.parse((event as CustomEvent<OptionsManagerEvent<string>>).detail.value)) as Entity);
+				loadoutScene.addChild(customLightsContainer);
+				customLightsContainer?.setVisible(OptionsManager.getItem('app.lights.usecustomlights') as boolean);
+			})();
+		});
+
+		OptionsManagerEvents.addEventListener('engine.shaders.defines.*', (event: Event): void => {
+			void (async (): Promise<void> => {
+				const defineName = (event as CustomEvent<OptionsManagerEvent<string>>).detail.name.replace('engine.shaders.defines.', '');
+				const defineType = await OptionsManager.getOptionType((event as CustomEvent<OptionsManagerEvent<string>>).detail.name);
+				if (defineType == 'boolean') {
+					if ((event as CustomEvent<OptionsManagerEvent<boolean>>).detail.value == true) {
+						Graphics.setDefine(defineName.toUpperCase());
+					} else {
+						Graphics.removeDefine(defineName.toUpperCase());
+					}
+				} else {
+					Graphics.setDefine(defineName.toUpperCase(), ((event as CustomEvent<OptionsManagerEvent<string>>).detail.value));
+				}
+			})();
+		});
+
+		await OptionsManager.init({ json: optionsmanager });
+	}
+
+	#setPerspectiveCameraPosition(position: string): void {
+		orbitCamera.setPosition(stringToVec3(position));
+	}
+
+	#setPerspectiveCameraOrientation(orientation: string): void {
+		orbitCamera.setOrientation(stringToQuat(orientation));
+	}
+
+	#setPerspectiveCameraTarget(target: string): void {
+		orbitCameraControl.target.setPosition(stringToVec3(target));
+	}
+
+	#setVerticalFov(fov: number): void {
+		orbitCamera.setVerticalFovAsDegree(fov);
+	}
+
 }
 new Application();
 
@@ -225,4 +278,19 @@ window.fetch = function (input: RequestInfo | URL, init?: RequestInit): Promise<
 	}
 
 	return originalFetch(url, init);
+}
+
+
+// TODO: put in a lib
+function hexToRgba(out: vec4, hex: string): vec4 {
+	const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+	if (result && result.length > 4) {
+		vec4.set(out,
+			parseInt(result[1]!, 16) / 255.0,
+			parseInt(result[2]!, 16) / 255.0,
+			parseInt(result[3]!, 16) / 255.0,
+			parseInt(result[4]!, 16) / 255.0,
+		);
+	}
+	return out
 }

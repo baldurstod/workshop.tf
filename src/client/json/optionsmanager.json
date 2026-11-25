@@ -1,0 +1,42 @@
+{
+	"categories": [
+		"app.lang",
+		"app",
+		"engine",
+		"app.css.variables"
+	],
+	"options": [
+		{
+			"name": "app.camera.position",
+			"type": "string",
+			"default": "0 -500 40"
+		},
+		{
+			"name": "app.camera.orientation",
+			"type": "string",
+			"default": "-1 0 0 1"
+		},
+		{
+			"name": "app.camera.target",
+			"type": "string",
+			"default": "0 0 40"
+		},
+		{
+			"name": "app.camera.verticalfov",
+			"type": "range",
+			"min": 1,
+			"max": 120,
+			"default": 10
+		},
+		{
+			"name": "app.lights",
+			"type": "string",
+			"default": "{\"constructor\":\"Group\",\"name\":\"Custom lights\",\"visible\":true,\"children\":[{\"constructor\":\"AmbientLight\",\"id\":\"23c6951e-47bf-4215-a633-cbd854235853\",\"castshadow\":false,\"color\":{\"0\":1,\"1\":1,\"2\":1},\"intensity\":1,\"shadowtexturesize\":1024},{\"constructor\":\"PointLight\",\"id\":\"362a3a44-4d3f-40cb-be93-6e62c524ef4b\",\"position\":{\"0\":0,\"1\":-500,\"2\":100},\"castshadow\":false,\"color\":{\"0\":2,\"1\":1,\"2\":1},\"intensity\":\"0.3\",\"shadowtexturesize\":1024,\"range\":\"1000\"},{\"constructor\":\"PointLight\",\"id\":\"7364a97c-d51d-4530-affe-6a15abcbf41b\",\"position\":{\"0\":250,\"1\":250,\"2\":250},\"castshadow\":false,\"color\":{\"0\":1,\"1\":1,\"2\":1},\"intensity\":\"1.5\",\"shadowtexturesize\":1024,\"range\":\"1000\"},{\"constructor\":\"PointLight\",\"id\":\"66c4f27a-a57f-41e5-90b9-19a1f5f84be4\",\"position\":{\"0\":-500,\"1\":100,\"2\":200},\"castshadow\":false,\"color\":{\"0\":1,\"1\":1,\"2\":1},\"intensity\":\"1.2\",\"shadowtexturesize\":1024,\"range\":\"1000\"}]}"
+		},
+		{
+			"name": "engine.shaders.defines.source1_specular_strength",
+			"type": "number",
+			"default": "0.1"
+		}
+	]
+}
