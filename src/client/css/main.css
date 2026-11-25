@@ -5,9 +5,18 @@
 	height: 100%;
 }
 
+.items-container {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	/*height: 100%;*/
+	/*max-width: 50%;*/
+	overflow: hidden;
+	position: relative;
+}
+
 .items {
-	max-width: 50rem;
-	flex: 1 1 0%;
+	flex: 1;
 	display: flex;
 	flex-wrap: wrap;
 	place-content: baseline center;
@@ -16,14 +25,14 @@
 	box-sizing: border-box;
 	overflow: hidden auto;
 	padding-bottom: 20rem;
-	background-color: blueviolet;
+	/*background-color: blueviolet;*/
 	--r: var(--rows, 1);
 }
 
 .spacer {
 	width: 10000rem;
 	height: calc(var(--item-size) * var(--r));
-	background-color: aquamarine;
+	/*background-color: aquamarine;*/
 }
 
 .item {
@@ -60,4 +69,18 @@
 
 .viewer {
 	flex: 1;
+	overflow: hidden;
+}
+
+.filters .name {
+	font-size: 1.5rem;
+}
+
+.filters .name input {
+	font-size: 1.5rem;
+}
+
+label {
+	display: flex;
+	gap: 0.3rem;
 }

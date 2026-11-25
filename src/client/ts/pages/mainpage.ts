@@ -1,6 +1,6 @@
 import { CanvasAttributes, CanvasLayout, CanvasView, Graphics } from 'harmony-3d';
 import { Page, ShortcutHandler } from 'harmony-browser-utils';
-import { createElement, createShadowRoot, hide, I18n, show } from 'harmony-ui';
+import { CompoundInputElement, createElement, createShadowRoot, createTextInput, hide, I18n, show } from 'harmony-ui';
 import { ItemFilterAttribute, STEAM_WORKSHOP_URL, Tf2CharacterManager, Tf2CharacterToClass, Tf2ItemManager, Tf2ItemTemplate, Tf2LoadoutController } from 'loadout';
 import mainCSS from '../../css/main.css';
 import { LOADOUT_LAYOUT, MAIN_CANVAS } from '../constants';
@@ -9,6 +9,7 @@ import { loadoutScene } from '../loadout/scene';
 export class MainPage extends Page {
 	#shadowRoot?: ShadowRoot;
 	#htmlItemList?: HTMLElement;
+	#htmlNameFilter?: HTMLInputElement;
 	#mainCanvas: CanvasAttributes | null = null;
 	#htmlCanvas!: HTMLCanvasElement;
 	#itemsInitialized = false;
@@ -37,7 +38,7 @@ export class MainPage extends Page {
 
 	activated(): void {
 		this.#initItems();
-
+		this.#htmlNameFilter?.focus();
 	}
 
 	deactivated(): void {
@@ -68,13 +69,32 @@ export class MainPage extends Page {
 			// TODO: display error
 		}
 
+		let nameFilter: CompoundInputElement;
 		this.#shadowRoot = createShadowRoot('div', {
 			adoptStyle: mainCSS,
 			class: 'mainpage',
 			childs: [
-				this.#htmlItemList = createElement('div', {
-					class: 'items',
-					child: createElement('div', { class: 'spacer' }),
+				createElement('div', {
+					class: 'items-container',
+					childs: [
+						createElement('div', {
+							class: 'filters',
+							childs: [
+								nameFilter = createTextInput({
+									class: 'name',
+									label: '#name',
+									$input: (event: InputEvent) => {
+										Tf2LoadoutController.dispatchEvent('setitemfilter', { detail: { attribute: ItemFilterAttribute.Name, value: (event.target as HTMLInputElement).value } });
+										this.#refreshItems();
+									},
+								}),
+							],
+						}),
+						this.#htmlItemList = createElement('div', {
+							class: 'items',
+							child: createElement('div', { class: 'spacer' }),
+						}),
+					],
 				}),
 				createElement('div', {
 					class: 'viewer',
@@ -82,11 +102,15 @@ export class MainPage extends Page {
 				}),
 			],
 		});
+
+		this.#htmlNameFilter = nameFilter.input;
 		I18n.observeElement(this.#shadowRoot);
 
 		this.#htmlItemList.addEventListener('scroll', () => this.#handleItemsScroll(), { passive: true });
 		// Refresh item in case the window is resized
 		new ResizeObserver(() => this.#refreshItems()).observe(this.#htmlItemList);
+
+		Tf2LoadoutController.dispatchEvent('setitemsortascending', { detail: false });
 
 		return this.#shadowRoot?.host as HTMLElement;
 	}
@@ -115,7 +139,7 @@ export class MainPage extends Page {
 		const [items, conflictingItems] = Tf2ItemManager.getFilteredItems(excludedItems);
 
 		const w = this.#htmlItemList!.clientWidth;
-		const elementSize = 150;//OptionsManager.getItem('app.css.variables.item-manager-item-size') as number ?? 150;
+		const elementSize = 200;//OptionsManager.getItem('app.css.variables.item-manager-item-size') as number ?? 150;
 		const columns = w / elementSize;
 		const offset = (columns % 1) * elementSize / 2;
 		this.#htmlItemList!.style.setProperty('--item-size', `${elementSize}px`);
@@ -145,6 +169,14 @@ export class MainPage extends Page {
 									innerText: item.name,
 									title: item.name,
 								}),
+								/*
+								createElement('a', {
+									href: `${STEAM_PROFILE_URL}${item.getDefinition().creator}`,
+									target: '_blank',
+									innerText: item.name,
+									title: item.name,
+								}),
+								*/
 							],
 						}),
 					],
