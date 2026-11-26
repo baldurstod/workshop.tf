@@ -15,5 +15,6 @@
 		"db": {
 			"datasource": "postgres://user:pass@localhost/db_name"
 		}
-	}
+	},
+	"server_address": "https://example.com"
 }

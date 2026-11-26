@@ -36,12 +36,12 @@ export class MainPage extends Page {
 		this.#imgIntersectionObserver = new IntersectionObserver(callback);
 	}
 
-	activated(): void {
+	override async activated(): Promise<void> {
 		this.#initItems();
 		this.#htmlNameFilter?.focus();
 	}
 
-	deactivated(): void {
+	override async deactivated(): Promise<void> {
 
 	}
 
@@ -72,7 +72,6 @@ export class MainPage extends Page {
 		let nameFilter: CompoundInputElement;
 		this.#shadowRoot = createShadowRoot('div', {
 			adoptStyle: mainCSS,
-			class: 'mainpage',
 			childs: [
 				createElement('div', {
 					class: 'items-container',

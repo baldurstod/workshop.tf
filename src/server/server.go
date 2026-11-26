@@ -74,6 +74,8 @@ func initEngine(config Config) *gin.Engine {
 	//r.Use(setHeaders())
 	r.StaticFS("/static", http.FS(useFS))
 	r.POST("/api", apiHandler)
+	r.GET("/openid", openIdHandler)
+	r.GET("/openidcallback", openIdCallbackHandler)
 
 	return r
 }
@@ -84,15 +86,21 @@ func getSinglePagePaths() []string {
 	return []string{"/upload"}
 }
 
-//
+var reservedPaths = getReservedPaths()
+
+func getReservedPaths() []string {
+	return []string{"/api", "/openid", "/openidcallback"}
+}
 
 //{"Origin", "Content-Length", "Content-Type", "X-Request-Id"},
 
 func rewriteURL(r *gin.Engine) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		if c.Request.URL.Path == "/api" {
-			c.Next()
-			return
+		for _, path := range reservedPaths {
+			if strings.HasPrefix(c.Request.URL.Path, path) {
+				c.Next()
+				return
+			}
 		}
 
 		for _, path := range singlePagePaths {

@@ -49,6 +49,8 @@ func apiHandler(c *gin.Context) {
 	switch request.Action {
 	case "get-items":
 		apiError = apiGetItems(c)
+	case "get-my-items":
+		apiError = apiGetMyItems(c, session)
 	default:
 		apiError = CreateApiError(NotFoundError)
 	}
@@ -80,5 +82,26 @@ func apiGetItems(c *gin.Context) apiError {
 	}
 
 	jsonSuccess(c, map[string]any{"items": files})
+	return nil
+}
+
+func apiGetMyItems(c *gin.Context, s sessions.Session) apiError {
+	steamId64, ok := s.Get("steam_id_64").(string)
+	if !ok {
+		return CreateApiError(NotLoggedError)
+	}
+
+	items, err := getCreatorItems(440, steamId64)
+
+	if err != nil {
+		logRequest(c, err)
+		return CreateApiError(UnexpectedError)
+	}
+
+	for i := range items {
+		items[i].PreviewUrl = strings.Replace(items[i].PreviewUrl, ugcUrlPrefix, "/", 1)
+	}
+
+	jsonSuccess(c, map[string]any{"items": items})
 	return nil
 }

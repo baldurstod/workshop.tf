@@ -1,9 +1,10 @@
 package main
 
 type Config struct {
-	HTTPS    `json:"https"`
-	Sessions `json:"sessions"`
-	Steam    `json:"steam"`
+	HTTPS         `json:"https"`
+	Sessions      `json:"sessions"`
+	Steam         `json:"steam"`
+	ServerAddress string `json:"server_address"`
 }
 
 type HTTPS struct {

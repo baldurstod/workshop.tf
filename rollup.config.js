@@ -50,6 +50,7 @@ for (const buildOption of BUILD_OPTIONS) {
 					copyOnce: true,
 					targets: [
 						{ src: 'src/client/index.html', dest: 'build/client/' },
+						{ src: 'src/client/img/sits_02.png', dest: 'build/client/img/' },
 						/*
 						{ src: 'src/client/json/', dest: 'build/client/' },
 						*/

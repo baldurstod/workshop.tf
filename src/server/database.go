@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"strconv"
 
+	workshop "github.com/baldurstod/go-steam-workshop"
 	"github.com/go-viper/mapstructure/v2"
 	_ "github.com/lib/pq"
 )
@@ -186,6 +187,21 @@ func getItems(params itemParams) ([]WorkshopItemSummary, error) {
 	}
 
 	return result, nil
+}
+
+func getCreatorItems(appId uint, creator string) ([]WorkshopItemSummary, error) {
+	if db == nil {
+		return nil, errors.New("database is not initialized. Did you forgot to init postgre ?")
+	}
+
+	files, err := workshop.GetPublishedFiles(db, appId, workshop.FileParams{Filter: workshop.FileFilter{Creator: creator, Types: []string{"Model"}}})
+
+	items := []WorkshopItemSummary{}
+	for _, file := range files {
+		items = append(items, WorkshopItemSummary{file.Publishedfileid, file.Creator, 0, file.Title, file.PreviewUrl, file.TimeCreated, file.TimeUpdated, file.Subscriptions, file.Tags})
+	}
+
+	return items, err
 }
 
 func getItemUrl(id uint64) (string, error) {

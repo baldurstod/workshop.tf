@@ -10,6 +10,7 @@ import varsCSS from '../css/vars.css';
 import english from '../json/i18n/english.json';
 import optionsmanager from '../json/optionsmanager.json';
 import { TF2_REPOSITORY } from './constants';
+import { Controller } from './controller';
 import { activeCameraControl, customLightsContainer, loadoutScene, orbitCamera, orbitCameraControl, setCustomLightsContainer } from './loadout/scene';
 import { MainPage } from './pages/mainpage';
 import { UploadPage } from './pages/uploadpage';
@@ -50,11 +51,15 @@ class Application extends SinglePageApplication {
 		setNotificationsPlacement(NotificationsPlacement.Bottom);
 		document.adoptedStyleSheets.push(this.#documentStyleSheet);
 		await this.#initGraphics();
-		//this.#initHTML();
+		this.#initEvents();
 
 		this.#initOptions();
 		this.#iniRepositories();
 		this.#start();
+	}
+
+	#initEvents(): void {
+		Controller.addEventListener('navigateto', (event) => this.navigateTo(event.detail));
 	}
 
 	async #initGraphics(): Promise<void> {
@@ -202,8 +207,8 @@ class Application extends SinglePageApplication {
 
 	override pageActivated(): void { }
 
-	get htmlElement(): ShadowRoot {
-		return this.#appView.shadowRoot;
+	get htmlElement(): HTMLElement {
+		return this.#appView.htmlElement;
 	}
 
 	async #initOptions(): Promise<void> {

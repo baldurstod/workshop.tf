@@ -11,18 +11,21 @@ const (
 	NotFoundError ApiErrorCode = iota
 	BadRequestError
 	UnexpectedError
+	NotLoggedError
 )
 
 var apiErrorValues = map[ApiErrorCode]error{
 	NotFoundError:   errors.New("not found"),
 	BadRequestError: errors.New("bad request"),
 	UnexpectedError: errors.New("unexpected error, contact support"),
+	NotLoggedError:  errors.New("user not logged"),
 }
 
 var apiErrorI18n = map[ApiErrorCode]string{
 	NotFoundError:   "#api_error_not_found",
 	BadRequestError: "#api_error_bad_request",
-	UnexpectedError: "#api_error_unexpected_error",
+	UnexpectedError: "#api_error_unexpected",
+	NotLoggedError:  "#api_error_not_logged",
 }
 
 type apiError interface {

@@ -17,6 +17,7 @@ func main() {
 		log.Fatal("Error while reading configuration", err)
 	}
 
+	setServerAddress(config.ServerAddress)
 	initItemsDB(config.Steam.DB)
 	initsessionsDB(config.Sessions.DB)
 	defer closePostgre()
