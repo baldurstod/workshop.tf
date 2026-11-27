@@ -2,8 +2,60 @@
 	display: flex;
 	width: 100%;
 	height: 100%;
+	justify-content: center;
 }
 
 .sits {
+	cursor: pointer;
+}
+
+.item {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	font-size: 2rem;
+}
+
+.item img {
+	width: 10rem;
+}
+
+.upload {
+	display: flex;
+}
+
+.file-drop {
+	height: 20rem;
+	border: 3px dashed;
+	position: relative;
+}
+
+.file-drop input {
+	height: 100%;
+	width: 100%;
+	opacity: 0;
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	cursor: pointer;
+}
+
+.styles {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+}
+
+.style {
+	display: flex;
+	flex-direction: column;
+	cursor: pointer;
+	background-color: blueviolet;
+	height: 3rem;
+}
+
+.back-button {
+	background-color: aqua;
+	padding: 0.5rem;
 	cursor: pointer;
 }

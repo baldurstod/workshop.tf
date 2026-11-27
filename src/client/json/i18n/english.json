@@ -1,7 +1,26 @@
 {
 	"lang": "english",
 	"strings": {
-		"#name": "name",
+		"#name": "Name",
+		"#back_to_the_item_list": "Back to the item list",
+		"#delete_item": "Delete item",
+		"#delete_style": "Delete style",
+		"#properties": "Properties",
+		"#files": "Files",
+		"#material_editor": "Material editor",
+		"#display_manipulator": "Display manipulator",
+		"#display_skeleton": "Display skeleton",
+		"#display_bone_joints": "Display bone joints",
+		"#display_bones_as_lines": "Display bones as line",
+		"#id": "Id",
+		"#position": "Position",
+		"#quaternion": "Quaternion",
+		"#scale": "Scale",
+		"#world_position": "World position",
+		"#world_quaternion": "World quaternion",
+		"#world_scale": "World scale",
+		"#update_style_#": "Update style ${style}",
+		"#add_a_new_style": "Add a new style",
 		"": ""
 	}
 }

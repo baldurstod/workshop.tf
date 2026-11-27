@@ -5,6 +5,25 @@
 	],
 	"strings": [
 		"#name",
+		"#back_to_the_item_list",
+		"#delete_item",
+		"#delete_style",
+		"#properties",
+		"#files",
+		"#material_editor",
+		"#display_manipulator",
+		"#display_skeleton",
+		"#display_bone_joints",
+		"#display_bones_as_lines",
+		"#id",
+		"#position",
+		"#quaternion",
+		"#scale",
+		"#world_position",
+		"#world_quaternion",
+		"#world_scale",
+		"#update_style_#",
+		"#add_a_new_style",
 		""
 	]
 }

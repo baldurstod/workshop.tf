@@ -1,4 +1,4 @@
-import { AmbientLight, Camera, CameraControl, ColorBackground, Entity, Group, HALF_PI, OrbitControl, PointLight, Scene, SceneExplorer, Source1ModelInstance, Source1ModelManager } from 'harmony-3d';
+import { Camera, CameraControl, ColorBackground, Entity, Group, HALF_PI, OrbitControl, PointLight, Scene, SceneExplorer, Source1ModelInstance, Source1ModelManager } from 'harmony-3d';
 
 export const loadoutScene = new Scene();
 export const loadoutColorBackground = new ColorBackground();
