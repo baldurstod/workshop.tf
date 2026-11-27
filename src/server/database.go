@@ -134,8 +134,6 @@ func getItems(params itemParams) ([]WorkshopItemSummary, error) {
 		return nil, errors.New("database is not initialized. Did you forgot to init postgre ?")
 	}
 
-	values := []any{}
-
 	sortField, found := sortFields[params.Sort.Field]
 	if !found {
 		sortField = "time_created"
@@ -149,7 +147,7 @@ func getItems(params itemParams) ([]WorkshopItemSummary, error) {
 	query := `SELECT published_files.publishedfileid, creator, style, title, preview_url, time_created, published_files.time_updated, subscriptions, array_to_json(tags)
 	FROM published_files INNER JOIN uploaded_files ON published_files.publishedfileid = uploaded_files.publishedfileid
 	WHERE disabled = false ORDER BY ` + sortField + ` ` + sortDirection + ` LIMIT(50000);`
-	res, err := db.Query(query, values...)
+	res, err := db.Query(query)
 	if err != nil {
 		return nil, fmt.Errorf("failed to execute query "+query+"in getItems: <%w>", err)
 	}
@@ -202,27 +200,41 @@ func getCreatorItems(appId uint, creator string) ([]WorkshopItemSummary, error) 
 	}
 
 	return items, err
+
 }
-
-func getItemUrl(id uint64) (string, error) {
-	row := db.QueryRow(`SELECT file_url FROM items WHERE publishedfileid = $1;`, id)
-
-	file_url := ""
-
-	err := row.Scan(&file_url)
-	if err != nil {
-		return "", fmt.Errorf("failed to scan row in getItems: <%w>", err)
+func getCreatorUploadedItems(creator string) ([]UploadedItem, error) {
+	if db == nil {
+		return nil, errors.New("database is not initialized. Did you forgot to init postgre ?")
 	}
 
-	return file_url, nil
-}
-
-func setItemBroken(id uint64) error {
-	_, err := db.Exec(`UPDATE items SET broken = TRUE WHERE publishedfileid = $1;`, id)
-
+	query := `SELECT published_files.publishedfileid, style, uploaded_files.title
+	FROM published_files INNER JOIN uploaded_files ON published_files.publishedfileid = uploaded_files.publishedfileid
+	WHERE uploaded_files.disabled = false AND creator = $1;`
+	res, err := db.Query(query, creator)
 	if err != nil {
-		return fmt.Errorf("failed to set item broken for item"+strconv.FormatUint(id, 10)+":  <%w>", err)
+		return nil, fmt.Errorf("failed to execute query "+query+"in getCreatorUploadedItems: <%w>", err)
+	}
+	defer res.Close()
+
+	result := []UploadedItem{}
+
+	for res.Next() {
+		var publishedfileid string
+		var style uint
+		var title string
+
+		err = res.Scan(&publishedfileid, &style, &title)
+		if err != nil {
+			return nil, fmt.Errorf("failed to scan row in getCreatorUploadedItems: <%w>", err)
+		}
+
+		result = append(result, UploadedItem{publishedfileid, style, title})
 	}
 
-	return nil
+	// Check if we have an error
+	if err := res.Err(); err != nil {
+		return nil, fmt.Errorf("failed to get next row in getCreatorUploadedItems: <%w>", err)
+	}
+
+	return result, nil
 }

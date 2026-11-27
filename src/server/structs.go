@@ -33,3 +33,9 @@ type WorkshopItemSummary struct {
 	Subscriptions   uint64   `json:"subscriptions"`
 	Tags            []string `json:"tags"`
 }
+
+type UploadedItem struct {
+	Publishedfileid string `json:"publishedfileid"`
+	Style           uint   `json:"style"`
+	Title           string `json:"title"`
+}

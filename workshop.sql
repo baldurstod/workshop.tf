@@ -20,6 +20,8 @@ CREATE TABLE uploaded_files (
 	id SERIAL,
 	publishedfileid TEXT PRIMARY KEY,
 	style INTEGER NOT NULL,
+	title TEXT NOT NULL,
 	time_uploaded TIMESTAMPTZ NOT NULL,
-	time_updated TIMESTAMPTZ NOT NULL
+	time_updated TIMESTAMPTZ NOT NULL,
+	disabled BOOLEAN DEFAULT false
 );

@@ -92,7 +92,12 @@ func apiGetMyItems(c *gin.Context, s sessions.Session) apiError {
 	}
 
 	items, err := getCreatorItems(440, steamId64)
+	if err != nil {
+		logRequest(c, err)
+		return CreateApiError(UnexpectedError)
+	}
 
+	uploaded, err := getCreatorUploadedItems(steamId64)
 	if err != nil {
 		logRequest(c, err)
 		return CreateApiError(UnexpectedError)
@@ -102,6 +107,6 @@ func apiGetMyItems(c *gin.Context, s sessions.Session) apiError {
 		items[i].PreviewUrl = strings.Replace(items[i].PreviewUrl, ugcUrlPrefix, "/", 1)
 	}
 
-	jsonSuccess(c, map[string]any{"items": items})
+	jsonSuccess(c, map[string]any{"items": items, "uploaded": uploaded})
 	return nil
 }
